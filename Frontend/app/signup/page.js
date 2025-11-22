@@ -1,0 +1,277 @@
+// "use client";
+
+// import { useState } from "react";
+// import { motion } from "framer-motion";
+// import { Button } from "@/components/ui/button";
+// import { Eye, EyeOff } from "lucide-react"; // 👈 ADDED: eye icons for password
+
+// export default function SignupPage() {
+//   // User input states
+//   const [name, setName] = useState("");
+//   const [email, setEmail] = useState("");
+//   const [password, setPassword] = useState("");
+
+//   // UI states
+//   const [showPassword, setShowPassword] = useState(false); // 👈 ADDED: toggle password
+//   const [error, setError] = useState("");
+//   const [success, setSuccess] = useState("");
+
+//   // Signup handler
+//   async function handleSignup(e) {
+//     e.preventDefault();
+//     setError("");
+//     setSuccess("");
+
+//     const res = await fetch("/api/signup", {
+//       method: "POST",
+//       headers: { "Content-Type": "application/json" }, // 👈 ADDED: important header
+//       body: JSON.stringify({ name, email, password }),
+//     });
+
+//     // 👇 ADDED: Safe JSON parsing to prevent "Unexpected end of JSON" error
+//     let data;
+//     try {
+//       data = await res.json();
+//     } catch (err) {
+//       setError("Server returned an invalid response. Check API.");
+//       return;
+//     }
+
+//     // If backend returns error → show it
+//     if (data.error) {
+//       setError(data.error); // 👈 will show "Email already exists"
+//       return;
+//     }
+
+//     // If success → redirect
+//     if (data.success) {
+//       setSuccess("Account created! Redirecting...");
+//       setTimeout(() => {
+//         window.location.href = "/login";
+//       }, 1500);
+//     }
+//   }
+
+//   return (
+//     <div className="min-h-screen flex items-center justify-center bg-[#e7e6e6] p-4">
+//       <motion.div
+//         initial={{ opacity: 0, y: 20 }}
+//         animate={{ opacity: 1, y: 0 }}
+//         transition={{ duration: 0.6 }}
+//         className="bg-white shadow-xl p-10 rounded-xl w-full max-w-md border"
+//       >
+//         <h1 className="text-3xl font-bold text-[#0A2342] text-center mb-6">
+//           Create Account
+//         </h1>
+
+//         {/* Error Message */}
+//         {error && <p className="text-red-600 mb-4 text-center">{error}</p>}
+
+//         {/* Success Message */}
+//         {success && <p className="text-green-600 mb-4 text-center">{success}</p>}
+
+//         <form onSubmit={handleSignup} className="flex flex-col gap-4">
+          
+//           {/* Name Input */}
+//           <input
+//             type="text"
+//             placeholder="Full Name"
+//             value={name}
+//             onChange={(e) => setName(e.target.value)}
+//             className="w-full p-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-[#1E88E5] outline-none"
+//             required
+//           />
+
+//           {/* Email Input */}
+//           <input
+//             type="email"
+//             placeholder="Email Address"
+//             value={email}
+//             onChange={(e) => setEmail(e.target.value)}
+//             className="w-full p-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-[#1E88E5] outline-none"
+//             required
+//           />
+
+//           {/* Password + Eye Icon */}
+//           <div className="relative">
+//             <input
+//               type={showPassword ? "text" : "password"} // 👈 ADDED: password toggle
+//               placeholder="Create Password"
+//               value={password}
+//               onChange={(e) => setPassword(e.target.value)}
+//               className="w-full p-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-[#1E88E5] outline-none pr-12"
+//               required
+//             />
+
+//             {/* Toggle eye icon */}
+//             <button
+//               type="button"
+//               onClick={() => setShowPassword(!showPassword)} // 👈 ADDED: toggle handler
+//               className="absolute right-3 top-3 text-gray-600"
+//             >
+//               {showPassword ? <EyeOff size={22} /> : <Eye size={22} />} 
+//             </button>
+//           </div>
+
+//           {/* Submit Button */}
+//           <Button
+//             type="submit"
+//             className="w-full rounded-xl bg-[#0A2342] hover:bg-[#102f57] text-white font-semibold py-3 shadow-md"
+//           >
+//             Sign Up
+//           </Button>
+//         </form>
+
+//         {/* Login redirect */}
+//         <p className="text-gray-700 text-center mt-6">
+//           Already have an account?{" "}
+//           <a href="/login" className="font-semibold text-[#1E88E5]">
+//             Login
+//           </a>
+//         </p>
+//       </motion.div>
+//     </div>
+//   );
+// }
+"use client";
+
+import { useState } from "react";
+import { motion } from "framer-motion";
+import { Github, Facebook, Mail } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { signIn } from "next-auth/react";
+
+export default function SignupPage() {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+
+  async function handleSignup(e) {
+    e.preventDefault();
+    setError("");
+    setSuccess("");
+
+    const res = await fetch("/api/signup", {
+      method: "POST",
+      body: JSON.stringify({ name, email, password }),
+    });
+
+     let data;
+    try {
+      data = await res.json();
+    } catch (err) {
+      setError("This Email already exist");
+      return;
+    }
+
+    // If backend returns error → show it
+    if (data.error) {
+      setError(data.error); // 👈 will show "Email already exists"
+      return;
+    }
+
+    // If success → redirect
+    if (data.success) {
+      setSuccess("Account created! Redirecting...");
+      setTimeout(() => {
+        window.location.href = "/login";
+      }, 1500);
+    }
+  }
+
+  return (
+   <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-900 to-cyan-600 p-6">
+
+  {/* LEFT SIDE – Project Title */}
+  <div className="hidden md:flex flex-col w-1/2 text-left pr-10">
+    <h1 className="text-4xl font-extrabold text-white leading-tight">
+      Legal Document Assistant
+    </h1>
+    <p className="text-slate-200 text-lg mt-4 max-w-md">
+      Create your account to analyze, summarize, and generate legal documents with powerful AI assistance.
+    </p>
+  </div>
+
+  {/* RIGHT SIDE – Form Card */}
+  <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="bg-white shadow-2xl p-10 rounded-2xl w-full max-w-md border border-slate-200"
+      >
+
+        {/* Project Title */}
+       
+
+        <h2 className="text-2xl font-semibold text-blue-900 text-center mb-2">
+          Create Account
+        </h2>
+        <p className="text-gray-600 text-center mb-6">Sign up to get started</p>
+
+        {/* SOCIAL SIGNUP */}
+   
+        {/* OR Divider */}
+        <div className="my-6 flex items-center gap-4">
+          <div className="flex-1 h-px bg-gray-300" />
+          <span className="text-gray-500 text-sm">or</span>
+          <div className="flex-1 h-px bg-gray-300" />
+        </div>
+
+        {/* Messages */}
+        {error && (
+          <p className="text-red-600 text-center mb-4 font-medium">{error}</p>
+        )}
+        {success && (
+          <p className="text-green-600 text-center mb-4 font-medium">{success}</p>
+        )}
+
+        {/* SIGNUP FORM */}
+        <form onSubmit={handleSignup} className="flex flex-col gap-4">
+          <input
+            type="text"
+            placeholder="Full Name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="w-full p-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-cyan-500 outline-none"
+            required
+          />
+
+          <input
+            type="email"
+            placeholder="Email Address"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="w-full p-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-cyan-500 outline-none"
+            required
+          />
+
+          <input
+            type="password"
+            placeholder="Create Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full p-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-cyan-500 outline-none"
+            required
+          />
+
+          <Button
+            type="submit"
+            className="w-full rounded-xl bg-cyan-600 hover:bg-cyan-700 text-white font-semibold py-3 shadow-md"
+          >
+            Sign Up
+          </Button>
+        </form>
+
+        {/* LOGIN LINK */}
+        <p className="text-gray-700 text-center mt-6">
+          Already have an account?{" "}
+          <a className="font-semibold text-cyan-600 hover:underline" href="/login">
+            Login
+          </a>
+        </p>
+      </motion.div>
+    </div>
+  );
+}
