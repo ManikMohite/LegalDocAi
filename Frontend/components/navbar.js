@@ -276,17 +276,18 @@ export default function Navbar() {
               <li className="flex items-center gap-3">
 
                 {/* USER IMAGE OR LETTER */}
-                {session.image ? (
-                  <img
-                    src={session.image}
-                    alt="profile"
-                    className="w-10 h-10 rounded-full border"
-                  />
-                ) : (
-                  <div className="w-10 h-10 rounded-full bg-cyan-200 flex items-center justify-center font-bold text-blue-900 uppercase">
-                    {session?.name?.[0] || session?.email?.[0] || "U"}
-                  </div>
-                )}
+             {session?.user?.image ? (
+  <img
+    src={session.user.image}
+    alt="profile"
+    className="w-10 h-10 rounded-full border"
+  />
+) : (
+  <div className="w-10 h-10 rounded-full bg-cyan-200 flex items-center justify-center font-bold text-blue-900 uppercase">
+    {session?.user?.name?.[0] || session?.user?.email?.[0] || "U"}
+  </div>
+)}
+
 
                 <span className="font-medium text-blue-900">{session.name}</span>
 
@@ -313,8 +314,8 @@ export default function Navbar() {
         <nav className="md:hidden mt-4 bg-white shadow-lg rounded-lg p-5 border border-slate-200">
           <ul className="flex flex-col space-y-4 text-gray-700 font-medium">
             <Link href="/" className="hover:text-blue-700">Home</Link>
-            <Link href="/dashboard" className="hover:text-blue-700">Features</Link>
-            <Link href="/general_chat" className="hover:text-blue-700">How it's works</Link>
+            <Link href="/features" className="hover:text-blue-700">Features</Link>
+            <Link href="/Howitwork " className="hover:text-blue-700">How it's works</Link>
 
             {!session ? (
               <>
