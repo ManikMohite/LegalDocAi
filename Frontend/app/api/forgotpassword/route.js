@@ -4,12 +4,13 @@ import crypto from "crypto";
 import connectDB from "@/lib/dbConnect";
 import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 export async function POST(req) {
   try {
     await connectDB();
     const { email } = await req.json();
+
+    // Initialize Resend inside handler
+    const resend = new Resend(process.env.RESEND_API_KEY);
 
     // 1️⃣ Check if user exists
     const user = await User.findOne({ email });
@@ -23,17 +24,19 @@ export async function POST(req) {
     // 2️⃣ Create reset token
     const token = crypto.randomBytes(32).toString("hex");
 
-    // Save token + expiry to database
+    // Save token + expiry
     user.resetToken = token;
-    user.resetTokenExpiry = Date.now() + 10 * 60 * 1000; // 10 minutes
-    await user.save(); 
+    user.resetTokenExpiry = Date.now() + 10 * 60 * 1000;
+    await user.save();
 
-    // 3️⃣ Your reset link
-    const resetURL = `http://localhost:3000/forgotpassword?token=${token}`;
+    // 3️⃣ Use your production site URL
+    const baseURL = process.env.NEXTAUTH_URL || process.env.NEXT_PUBLIC_API_URL;
 
-    // 4️⃣ Send email with Resend
+    const resetURL = `${baseURL}/forgotpassword?token=${token}`;
+
+    // 4️⃣ Send email
     await resend.emails.send({
-      from: "Reset Password <noreply@resend.dev>",
+      from: "Reset Password <noreply@yourdomain.com>",
       to: email,
       subject: "Reset Your Password",
       html: `
