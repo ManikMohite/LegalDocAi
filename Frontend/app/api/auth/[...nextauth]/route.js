@@ -6,25 +6,22 @@ import CredentialsProvider from "next-auth/providers/credentials";
 
 async function verifyUser(email, password) {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/login`, {
+    const res = await fetch(`${process.env.API_URL}/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
     });
 
     const data = await res.json();
-    console.log("Backend login response:", data);
+    if (res.ok && data.success) return data.data;
 
-    // backend success: true → return user data
-    if (res.ok && data?.success) return data.data;
-
-    // backend said invalid → return null
     return null;
-  } catch (error) {
-    console.error("Login API failed:", error);
+  } catch (err) {
+    console.error("Login API failed:", err);
     return null;
   }
 }
+
 
 const handler = NextAuth({
   providers: [
